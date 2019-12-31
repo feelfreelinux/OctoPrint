@@ -11,7 +11,6 @@ import sys
 import threading
 import yaml
 
-import psutil
 
 from octoprint.plugin import EnvironmentDetectionPlugin
 from octoprint.util.platform import get_os
@@ -99,19 +98,6 @@ class EnvironmentDetector(object):
 		result = dict(cores="unknown",
 		              freq="unknown",
 		              ram="unknown")
-
-		try:
-			cores = psutil.cpu_count()
-			cpu_freq = psutil.cpu_freq()
-			ram = psutil.virtual_memory()
-			if cores:
-				result["cores"] = cores
-			if cpu_freq and hasattr(cpu_freq, "max"):
-				result["freq"] = cpu_freq.max
-			if ram and hasattr(ram, "total"):
-				result["ram"] = ram.total
-		except Exception:
-			self._logger.exception("Error while detecting hardware environment")
 
 		return result
 

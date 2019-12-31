@@ -23,7 +23,6 @@ import octoprint.slicing
 from octoprint.util import sv
 
 import os
-import psutil
 import hashlib
 import logging
 import threading
@@ -111,8 +110,7 @@ def readGcodeFiles():
 	files = _getFileList(FileDestinations.LOCAL, filter=filter, recursive=recursive, allow_from_cache=not force)
 	files.extend(_getFileList(FileDestinations.SDCARD))
 
-	usage = psutil.disk_usage(settings().getBaseFolder("uploads", check_writable=False))
-	return jsonify(files=files, free=usage.free, total=usage.total)
+	return jsonify(files=files, free=10000000, total=10000000)
 
 
 @api.route("/files/<string:origin>", methods=["GET"])
@@ -135,8 +133,7 @@ def readGcodeFilesForOrigin(origin):
 	files = _getFileList(origin, filter=filter, recursive=recursive, allow_from_cache=not force)
 
 	if origin == FileDestinations.LOCAL:
-		usage = psutil.disk_usage(settings().getBaseFolder("uploads", check_writable=False))
-		return jsonify(files=files, free=usage.free, total=usage.total)
+		return jsonify(files=files, free=10000000, total=10000000)
 	else:
 		return jsonify(files=files)
 
@@ -555,7 +552,7 @@ def gcodeFileCommand(filename, target):
 			if not any([octoprint.filemanager.valid_file_type(filename, type=source_file_type) for source_file_type in slicer_instance.get_slicer_properties().get("source_file_types", ["model"])]):
 				return make_response("Cannot slice {filename}, not a model file".format(**locals()), 415)
 
-			cores = psutil.cpu_count()
+			cores = 4
 			if slicer_instance.get_slicer_properties().get("same_device", True) and (printer.is_printing() or printer.is_paused()) and (cores is None or cores < 2):
 				# slicer runs on same device as OctoPrint, slicing while printing is hence disabled
 				return make_response("Cannot slice on {slicer} while printing on single core systems or systems of unknown core count due to performance reasons".format(**locals()), 409)

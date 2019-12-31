@@ -115,9 +115,7 @@ class LoggingPlugin(octoprint.plugin.AssetPlugin,
 		return self.get_logging_levels_api()
 
 	def _get_usage(self):
-		import psutil
-		usage = psutil.disk_usage(settings().getBaseFolder("logs", check_writable=False))
-		return usage.free, usage.total
+		return 100000, 100000
 
 	def _getLogFiles(self):
 		files = []
